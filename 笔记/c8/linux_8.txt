@@ -1,0 +1,161 @@
+【1】socket 类型
+    1-- 流式套接字(SOCK_STREAM) TCP
+        提供了一个面向连接、可靠的数据传输服务，数据无差错、无重复的发送且按发送顺序接收。内设置        流量控制，避免数据流淹没慢的接收方。数据被看作是字节流，无长度限制。
+
+    2-- 数据报套接字(SOCK_DGRAM) udp
+        提供无连接服务。数据包以独立数据包的形式被发送，不提供无差错保证，数据可能丢失或重复，顺        序发送，可能乱序接收。
+
+    3-- 原始套接字(SOCK_RAW)
+        可以对较低层次协议如IP、ICMP直接访问。
+
+【2】IP 地址
+     IP地址是Internet中主机的标识
+     
+【3】端口号
+     为了区分一台主机接收到的数据包应该转交给哪个进程来进行处理，使用端口号来区别
+
+【4】 int socket(int domain, int type, int protocol);
+      功能：建立一个链接，返回一个文件描述符
+      参数： 通信协议族 domain     AF_UNIX , AF_LOCAL  本地通信
+                                   AF_INET             网络通信
+
+             类型       type       SOCK_STREAM     流式套接字
+                                   SOCK_DGRAM      数据报通信
+             协议       protocal   通常情况下 为  0
+      返回值：成功返回网络套接字（一个文件描述符）， 出错返回-1
+
+
+【5】 int bind(int sockfd, const struct sockaddr *addr,
+                socklen_t addrlen);
+      功能：绑定ip地址、端口号与网络套接字关联起来。
+      参数：sockfd      网络套接字
+            addr        结构体指针
+            addrlen     结构体大小
+      返回值：成功为0  ， 出错 -1
+
+      // 通用
+      struct sockaddr {
+            sa_family_t sa_family;
+            char        sa_data[14];
+      }
+
+      typedef uint16_t in_port_t;
+
+     // 实际使用的
+     struct sockaddr_in
+     {
+        __SOCKADDR_COMMON (sin_);    /* sin_family */
+        in_port_t sin_port;         /* Port number.  */   端口号  
+
+       struct in_addr sin_addr;        /* Internet address.  */   ip地址                                                   
+ 
+       /* Pad to size of `struct sockaddr'.  */  使两个结构体大小匹配。仅仅是做填充的。
+       unsigned char sin_zero[sizeof (struct sockaddr) -
+                 __SOCKADDR_COMMON_SIZE -
+                 sizeof (in_port_t) -
+                 sizeof (struct in_addr)];
+     };
+ 
+
+    /* Internet address.  */
+    typedef uint32_t in_addr_t;
+
+    struct in_addr
+   {
+      in_addr_t s_addr;                                                                                             
+   };
+ 
+ 【6】字节序转换
+      uint16_t htons(uint16_t hostshort);
+      功能：将本机字节序转换为网络字节序
+      
+
+ 【7】in_addr_t inet_addr(const char *cp);
+      功能：将点分十进制的ip地址，转换成无符号32位的整形数据。
+
+
+ 【8】 int listen(int sockfd, int backlog);
+       功能：将sockfd 置为监听模式
+       参数： sockfd  套接字
+              backlog  监听的个数
+       返回值：成功返回0， 出错返回-1
+
+
+ 【9】int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+      功能：接收客户端的连接请求，得到客户端的信息，返回一个新套件字
+      参数：sockfd     监听套接字
+            addr       保存客户端的信息（ip、port）
+            addrlen    大小
+      返回值：成功 返回新的套接字，出错 返回-1
+
+
+ 【10】 ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+       功能：发送信息
+       参数：sockfd   已经建立连接的文件描述符
+             buf      缓存区的首地址
+             len      要发送内容的大小
+              flags    0   阻塞方式发送
+       返回值：成功返回已经发送完毕的字节数，出错返回-1
+
+
+ 【11】ssize_t recv(int sockfd, void *buf, size_t len, int flags);
+       功能：接收消息
+       参数：sockfd  已经连接的套接字
+             buf     要发送的内容
+             len     要发送的字节数
+             flags   0 
+       返回值：成功返回接收到的字节数，失败返回-1
+
+
+ 【12】 int connect(int sockfd, const struct sockaddr *addr,
+                   socklen_t addrlen);
+        功能:客户端向服务器发送连接请求
+        参数：sockfd    套接字
+              addr      填充的是服务器的ip、port信息
+              addrlen   大小
+        返回值：成功返回0， 出错返回-1
+
+ 【13】tcp 通信
+       服务器端                   客户端
+       socket()                   socket()
+       bind()
+       listen()
+       accept()                   connect()
+       send/recv                  send/recv 
+
+
+ 【14】ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,
+                        struct sockaddr *src_addr, socklen_t *addrlen);
+       功能：接收消息（用于udp 编程）
+       参数：sockfd    套接字
+             buf       缓存区的首地址
+             len       缓存区的大小
+             flags     0
+             src_addr  对方的ip、port信息
+             addrlen   信息大小的地址
+       返回值：实际读到的字节数，出错返回-1
+
+【15】 ssize_t sendto(int sockfd, const void *buf, size_t len, int flags,
+                      const struct sockaddr *dest_addr, socklen_t addrlen)
+
+       功能：接收消息（用于udp 编程）
+       参数：sockfd    套接字
+             buf       缓存区的首地址
+             len       缓存区的大小
+             flags     0
+             src_addr  对方的ip、port信息
+             addrlen   信息大小的地址
+       返回值：实际读到的字节数，出错返回-1
+
+
+
+
+
+
+
+
+
+
+
+
+

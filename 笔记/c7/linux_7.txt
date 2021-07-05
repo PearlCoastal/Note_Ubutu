@@ -1,0 +1,255 @@
+【1】DIR *opendir(const char *name);
+     功能：打开一个目录，得到一个目录流指针
+     参数：name  路径名（目录名）
+     返回值：成功返回 目录流指针，出错 NULL
+
+【2】struct dirent *readdir(DIR *dirp);
+     功能：读目录
+     参数：dirp  目录流指针
+     返回值：成功 结构体指针，出错 NULL
+
+
+            struct dirent {
+               ino_t          d_ino;       /* inode number */
+               off_t          d_off;       /* offset to the next dirent */
+               unsigned short d_reclen;    /* length of this record */
+               unsigned char  d_type;      /* type of file; not supported
+                                              by all file system types */
+               char           d_name[256]; /* filename */
+           };
+
+
+【3】 int stat(const char *path, struct stat *buf);
+      功能：获取文件的属性信息
+      参数： path 路径名
+             buf  结构体变量取地址， 保存文件的属性信息
+      返回值：成功返回0， 出错 -1
+
+
+      struct stat {
+               dev_t     st_dev;     /* ID of device containing file */
+               ino_t     st_ino;     /* inode number */
+               mode_t    st_mode;    /* protection */
+               nlink_t   st_nlink;   /* number of hard links */
+               uid_t     st_uid;     /* user ID of owner */
+               gid_t     st_gid;     /* group ID of owner */
+               dev_t     st_rdev;    /* device ID (if special file) */
+               off_t     st_size;    /* total size, in bytes */
+               blksize_t st_blksize; /* blocksize for file system I/O */
+               blkcnt_t  st_blocks;  /* number of 512B blocks allocated */
+               time_t    st_atime;   /* time of last access */
+               time_t    st_mtime;   /* time of last modification */
+               time_t    st_ctime;   /* time of last status change */
+           };
+
+  d        rwxrwxr-x      2        linux   linux  4.0K  Apr 30 17:02   android
+  文件类型  权限         链接数    用户ID  组ID   大小  时间           文件名
+
+
+  getpwuid（）；
+
+  getgrgid（）；
+
+【4】struct passwd *getpwuid(uid_t uid);
+     功能：得到用户名相关信息
+     参数：uid  用户ID号
+     返回值：结构体指针， 出错 NULL
+     struct passwd {
+               char   *pw_name;       /* username */
+               char   *pw_passwd;     /* user password */
+               uid_t   pw_uid;        /* user ID */
+               gid_t   pw_gid;        /* group ID */
+               char   *pw_gecos;      /* user information */
+               char   *pw_dir;        /* home directory */
+               char   *pw_shell;      /* shell program */
+     };
+
+【5】 struct group *getgrgid(gid_t gid);
+     功能：得到组的相关信息
+     参数：gid  组id号
+     返回值：结构体指针，出错 NULL
+           struct group {
+               char   *gr_name;       /* group name */
+               char   *gr_passwd;     /* group password */
+               gid_t   gr_gid;        /* group ID */
+               char  **gr_mem;        /* group members */
+           };
+ 
+【6】ps     process snapshot   进程快照
+     ps  -axj  查看当前所有进程信息
+
+     PPID        PID    PGID   SID      TTY      TPGID  STAT   UID     TIME   COMMAND
+     父亲进程号  进程号        会话组   终端            状态   用户id  时间   程序名
+
+     tty :  ?  代表它是一个守护进程。后台服务
+  
+   进程的状态：
+       D    uninterruptible sleep (usually IO)   不可中断睡眠态
+       R    running or runnable (on run queue)   正在运行态、等待运行态
+       S    interruptible sleep (waiting for an event to complete) 睡眠态
+       T    stopped, either by a job control signal or because it is being traced. 停止态
+       X    dead (should never be seen) 死亡态
+       Z    defunct ("zombie") process, terminated but not reaped by its parent. 僵尸态
+
+       <    high-priority (not nice to other users)  进程的优先级
+       N    low-priority (nice to other users)  低优先级
+       L    has pages locked into memory (for real-time and custom IO) 内存锁
+       s    is a session leader  会话组组长
+       l    is multi-threaded (using CLONE_THREAD, like NPTL pthreads do) 进程中包含线程
+       +    is in the foreground process group. 前台进程
+
+
+  
+
+【7】进程的类型
+     1-- 交互进程：该类进程是由shell控制和运行的。交互进程既可以在前台运行，也可以在后台运行。
+                   前台进程：可以有输入，输出。
+                   后台进程：只有输出，不能有输入。 ./a.out &
+
+     2-- 批处理进
+
+     3-- 守护进程：该类进程在后台运行。它一般在Linux启动时开始执行，系统关闭时才结束。？
+
+
+
+【8】查看信号
+     kill  -l
+     2) SIGINT    终止信号。默认杀死进程  ctrl + c
+     3) SIGQUIT   终止信号，默认杀死进程  ctrl + \
+     9) SIGKILL   杀死一个进程
+     17) SIGCHLD  子进程的状态改变，会给父亲进程发送的一个信号	
+     18) SIGCONT  唤醒进程（停止态）  	
+     19) SIGSTOP  停止信号	
+     20) SIGTSTP  停止信号
+
+   信号处理方式：
+             1-- 捕捉信号
+             2-- 忽略信号
+             3-- 默认缺省操作
+
+  注意：SKILL  , SIGSTOP  这两个信号，既不能被捕捉，也不能被忽略。只能执行缺省操作。
+
+【9】 pid_t fork(void);
+      功能：创建子进程，儿子进程会对父亲进程，做一个精确的拷贝。
+      参数: 无
+      返回值：成功 在父亲进程中返回值为儿子的进程号，在儿子进程中返回值为0
+              出错 -1
+
+      注意：儿子进程几乎完全拷贝父亲进程的所有的内容，包括代码、缓存区，除了pid不拷贝。
+            fork 之后，赋值之前，儿子进程就可以运行。
+
+      儿子进程是在fork之后才开始运行。
+
+     pid_t getpid(void);
+     功能： 获取当前正在运行进程的进程号
+
+     pid_t getppid(void);
+     功能：获取当前进程的父亲的进程号。
+
+【10】  pid_t wait(int *status);
+       功能：等待子进程的结束，阻塞（睡眠）功能。
+       参数： status  子进程退出的状态值
+       返回值：成功返回结束的子进程的进程号，出错 -1
+
+
+
+【10】僵尸产生的条件
+      1-- 父亲活着，儿子死了，但是父亲没有给儿子收尸，产生僵尸。
+
+      如何避免僵尸?
+      1-- 父亲先死，儿子活着，此时没有僵尸的产生。原因，父亲死亡之后，儿子进程由1号进程 init 收养。
+          如果儿子再次死亡，由init进程为它收尸。
+          父亲进程的尸体被bash收取（系统自动）
+
+      2-- 儿子进程先死，父亲进程调用wait函数，收尸，不会产生僵尸进程。
+
+
+【11】ctags 用法
+      1-- cd  /usr/include/
+      2-- sudo ctags  -R  生成tags文件，索引文件
+      3-- vim -t "FILE"
+      4-- 光标放在要追踪的内容处，ctrl + ] 向下一级跟踪
+      5--  ctrl + t 返回上一级
+      6-- 退出 q  
+
+【12】int kill(pid_t pid, int sig);
+      功能：给任意进程发送任何信号
+      参数： pid 进程号
+             sig  信号（kill -l）
+      返回值：成功 0， 出错 -1
+
+
+【13】守护进程
+      守护进程，也就是通常所说的Daemon进程，是Linux中的后台服务进程。它是一个生存期较长的进程。
+    通常独立于控制终端并且周期性的执行某种任务或等待处理某些发生的事件。
+
+    步骤：
+        1-- 创建子进程，父进程退出  fork（）
+            子进程形式上脱离终端，只是表象。
+
+        2-- 在子进程中创建新会话 setsid（） 
+            创建新的会话，自己晋升为组长，真正意义上脱离终端。
+
+        3-- 改变当前目录为根目录 chdir（）
+            根目录是永远不能被删除的。
+ 
+
+        4-- 重设文件权限掩码 umask（）
+            使的权限更灵活 
+
+        5-- 关闭文件描述符 close( ) 
+            关闭所有的文件描述符。
+
+
+   
+
+pid_t setsid(void);
+RETURN VALUE
+       On success, the (new) session ID of the  calling  process
+       is returned.  On error, (pid_t) -1 is returned, and errno
+       is set to indicate the error.
+
+
+int chdir(const char *path);
+DESCRIPTION
+       chdir()  changes  the  current  working  directory of the
+       calling process to the directory specified in path.
+
+       fchdir() is identical to chdir(); the only difference  is
+       that the directory is given as an open file descriptor.
+
+RETURN VALUE
+       On  success, zero is returned.  On error, -1 is returned,
+       and errno is set appropriately.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

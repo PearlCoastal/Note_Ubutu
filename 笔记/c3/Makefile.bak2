@@ -1,0 +1,16 @@
+OBJ=scanf
+CC=gcc
+CFLAGS=-c 
+
+$(OBJ):scanf.o
+	$(CC) $< -o $@
+
+scanf.o:scanf.c
+	$(CC) $(CFLAGS) $< -o $@
+
+.PHONY:
+	clean
+
+clean:
+	$(RM) *.o $(OBJ)
+

@@ -1,0 +1,162 @@
+控制垃圾字符 
+1.
+%c%*c     
+2.
+getchar（）
+3.
+%c %c %c
+
+
+makefile
+
+替换
+：%s/原文件名/新文件名/g
+
+
+wc -w count.c
+计数
+
+$^  所有不重复的文件
+
+七种文件类型
+d  目录 directory
+-  普通文件
+b 块设备文件 （硬盘，u盘）block
+c 字符设备文件（mic 键盘 显示器 鼠标）charactor
+l  链接文件 类似于快捷方式 link
+s 套接字文件 sock
+p pipe 管道文件
+
+bcd-lsp
+
+
+查找 vim -t “查找文件名”
+
+2.
+FILE 文件流
+3.
+标准I/O
+全缓存：和和文件相关联的 
+行缓存：和终端相关联
+            1.   \n 刷新缓存区
+             2.  缓存区满 刷新缓存区
+             3.  进程正常结束 系统刷新
+               4. fflush() 函数强制刷新
+                
+不缓存  stderr(标准出错信息都是不缓存)
+
+stdin 标准输入流
+stdout 标准输出流
+stderr 标准出错流
+
+
+time.h
+
+
+
+day 6 
+
+Int open(const char *pathname,int flags,mode_t mode);
+功能：打开一个文件
+参数：pathname   路径名
+      flags      O_CREAT O_RDONLY O_WRONLY O_RDWR,O_EXCL,O_TRUNC
+      mode       创建此文件的权限，只有flags 为 O_CREAT 才会出现此参数 
+                 0664 --》 rw-rw-r--
+返回值：成功 文件描述符 
+        失败 -1
+
+
+ssize_t write(int fd,const void *buf,size_t count);
+功能：向指定文件描述中 希望写入count个字节大小的内容 内容是buf所指向的缓存区的内容
+参数：fd 文件描述符 Int fd = open（）；
+      buf 要写入内容的缓存区的首地址
+      count 希望写入的数量
+
+返回值：成功 希望实际写入的数量
+        失败 -1
+
+
+ssize_t read(int fd,void *buf,size_t count);
+功能：希望从文件描述中读取count个字符，然后把这些督导字符保存到buf所指向的缓存区中
+参数：fd    文件描述符
+      buf   缓存区的首地址：
+      count 希望读取的字节数
+返回值：成功 实际独到的字节数
+        失败 -1
+
+
+day 7
+DIR *opendir(const char*name);
+功能： 打开一个目录 得到一个目录流指针
+参数：name 路径名（目录名）
+返回值： 成功 流指针
+         失败 0
+
+
+struct dirent *readdir(DIR *dirp)
+{
+  
+}
+
+int stat(const char *path,struct stat *buf)
+功能：获取文件的属性信息
+参数：path 路径名
+      buf 结构体变量取地址 保存文件的属性信息
+返回值：成功 0
+        失败 -1
+
+
+fork     ：create a child process
+
+SYNOPSIS
+       #include <unistd.h>
+
+       pid_t fork(void);
+
+
+
+RETURN VALUE
+       On  success,  the PID of the child process is returned in
+       the parent, and 0 is returned in the child.  On  failure,
+       -1  is  returned  in the parent, no child process is cre‐
+       ated, and errno is set appropriately.
+
+
+功能：创建子进程 儿子进程对父亲进程做精确拷贝
+
+参数：无
+
+pid_t getpid(void);   获取当前进程的进程号
+pid_t getppid(void);  获取当前进程父亲进程的进程号
+
+僵尸产生的条件：父亲活着 儿子死了 父亲没有给儿子收尸 就产生了僵尸
+
+
+如何避免僵尸 父亲先死 儿子活着 此时没有僵尸的产生  原因：父亲死亡之后 儿子进程由init进程收养 init成为养父
+                                                        如果儿子再次死亡 有init进程为它收尸 
+                                                        父亲进程的尸体由bash收取（系统自动） 
+             收尸函数（） 儿子先死 父亲进程调用wait函数收尸，不会产生僵尸。
+
+pid_t wait(int *status)
+功能：等待子进程的结束，阻塞（睡眠）功能
+参数：status  子进程退出的状态值
+返回值：成功 返回结束的子进程的进程号
+        失败 -1
+
+
+ctags 用法：
+cd /usr/include/
+sudo ctags -R 生成tags文件 索引文件
+vim -t "FILE"
+光标放在要追踪的内容处 ctrl +】向下一级追踪
+ctrl t返回上一级
+退出 q
+
+
+
+int kill(pid_t pid,int sig);
+功能：给任意进程发送任何信号
+参数：pid 进程号
+      sig 信号（kill - 1）
+返回值：成功 0
+        失败 -1

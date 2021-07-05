@@ -1,0 +1,68 @@
+【1】时间的获取
+ time_t time(time_t *t);
+
+
+
+【2】时间的格式转换
+ struct tm *localtime(const time_t *timep);
+
+  struct tm {
+               int tm_sec;         /* seconds */
+               int tm_min;         /* minutes */
+               int tm_hour;        /* hours */
+               int tm_mday;        /* day of the month */
+               int tm_mon;     zuii    /* month */
+               int tm_year;        /* year */
+               int tm_wday;        /* day of the week */
+               int tm_yday;        /* day in the year */
+               int tm_isdst;       /* daylight saving time */
+           };
+
+ fprintf();
+
+
+【3】输出函数
+    int fprintf(FILE *stream, const char *format, ...);
+    功能：向指定的流中，写数据。
+
+【4】 int fgetc(FILE *stream);
+      功能：从指定的流中读取一个字符
+      参数：stream  流
+      返回值：成功返回读到字符的ASCII码值
+
+
+【5】 int fputc(int c, FILE *stream);
+       功能：向指定流中，写入一个字符
+       参数：c       要写入的字符
+             stream  流
+       返回值：成功 返回 被写入的字符，出错 EOF
+
+【6】int fseek(FILE *stream, long offset, int whence);
+     功能：设置文件流指针的位置
+     参数：stream    流
+           offset   偏移量
+           whence   SEEK_SET  文件开头
+                    SEEK_CUR  文件的当前位置
+                    SEEK_END  文件结尾
+     返回值：成功 返回0， 出错 返回-1
+     
+     注意：fseek 函数只能对普通文件进行定位，不能对块设备、字符设备文件等等 进行定位。
+
+作业：向文件中指定的位置+10写入一个字符A，
+      fopen、fseek、fputc
+  
+【7】文件IO
+   文件IO：每打开一个文件，会产生一个文件描述符。
+   文件描述符：顺序分配、最小的、非负的整数。
+
+
+
+
+
+
+
+
+
+
+
+

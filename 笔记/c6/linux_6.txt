@@ -1,0 +1,51 @@
+【1】 int open(const char *pathname, int flags, mode_t mode);
+      功能：打开一个文件
+      参数：pathname   路径名
+            flags      打开的标志  O_CREAT, O_RDONLY, O_WRONLY, O_RDWR,O_EXCL,O_TRUNC
+            mode       创建此文件的权限。只有flags中有O_CREAT 才会存在这个参数。
+                       0664  --> rw-rw-r--
+     返回值： 成功 文件描述符，出错 -1
+
+
+【2】 ssize_t write(int fd, const void *buf, size_t count);
+      功能：将buf所指向的缓存区内容，写入到指定文件描述中。大小为count个字节。
+      参数： fd   文件描述符
+             buf  要写入内容的缓存区的首地址
+             count 实际写入的数量
+      返回值：成功 返回实际写入字节个数，出错 返回-1
+
+【3】 int close(int fd);
+      功能：关闭文件描述符
+
+作业：测试当前的进程，最多可以打开多少个文件。
+
+
+【4】fopen  与 open 函数对比
+     fopen          open
+     r              O_RDONLY
+     r+             O_RDWR
+     w              O_WRONLY|O_CREAT|O_TRUNC  
+     w+             O_RDWR|O_CREAT|O_TRUNC
+     a              O_WRONLY|O_CREAT|O_APPEND
+     a+             O_RDWR|O_CREAT|O_APPEND
+
+
+【5】 ssize_t read(int fd, void *buf, size_t count);
+      功能：期望从文件描述符中读取 count 个字符，然后把这些读到字符保存buf 所指向的缓存区中。
+      参数：fd     文件描述符
+            buf    缓存区的首地址
+            count  期望读取的字节数
+      返回值：　成功　实际读到的字节数，　出错-1
+
+
+练习：实现文件的拷贝  cp 
+     1、给出一个源文件拷贝一份为目标文件
+     2、读源文件  ， 只读
+        写目标文件， 只写,不存在创建，存在清零
+     3、要求命令行传参， ./a.out  src.txt  dst.txt
+
+
+【6】文件属性
+    opendir
+
+    readdir

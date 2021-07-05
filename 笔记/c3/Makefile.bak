@@ -1,0 +1,15 @@
+OBJ=task
+CC=gcc
+
+task:task.o
+	gcc task.o -o task
+
+task.o:task.c
+	gcc -c task.c -o task.o
+
+.PHONY:
+	clean
+
+clean:
+	rm *.o task
+
