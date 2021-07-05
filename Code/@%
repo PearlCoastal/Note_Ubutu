@@ -1,0 +1,13 @@
+OBJ=a-A
+CC=gcc
+CFLAGS=-c
+task:a-A.o
+	$(CC) $< -o $@
+task.o:task.c
+	$(CC) $(CFLAGS) $< -o $@
+
+.PHONY:
+	clean
+
+clean:
+	$(RM) *.o $(OBJ)
